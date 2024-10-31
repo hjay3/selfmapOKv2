@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./d3plot.js"></script>
+
+    <style>
+      /* Add the styles defined above here */
+    </style>
+  </head>
+  <body>
+    <div id="visualization"></div>
+    <script>
+      // Your JSON data
+      const jsonData = {
+        'Self Map 1': {
+          Name: 'Emily Rivera',
+          Age: 32,
+          Gender: 'Female',
+          'Racial Attributes': {
+            Identity: 'Latina',
+            'Attachment Strength':
+              '8/10 \u2013 Strong sense of cultural identity',
+          },
+          Family: { Mother: 8, Brother: 7, Father: 3 },
+          'Morals / Ethics / Values / Philosophy': {
+            Beliefs: 'Strong belief in fairness, equality, and empathy',
+            Strength: 9,
+          },
+          'Sexual Identity': { Identity: 'Heterosexual', Strength: 5 },
+          'Religious Beliefs': {
+            Beliefs: 'Agnostic but open to spirituality',
+            Strength: 4,
+          },
+          'Vocation / Job': {
+            Title: 'Teacher',
+            Identification: 'Identifies heavily with her role in education',
+            Strength: 9,
+          },
+          'Closest Relationships': { 'Best Friend': 8, Partner: 6 },
+          'Character Strengths': { Empathy: 9, Resilience: 7 },
+          'Character Traits': { Introverted: 6, Assertive: 6 },
+          'Community / Group Affiliations': { Volunteer: 6 },
+          'Education / Knowledge': {
+            Degree: 'Bachelor\u2019s in Education',
+            Strength: 7,
+          },
+          'Sports Team Affiliation': {
+            Interest: 'Indifferent to sports',
+            Strength: 2,
+          },
+          'Political Leanings': {
+            Ideology: 'Liberal, socially engaged',
+            Strength: 8,
+          },
+          'Future Aspirations': {
+            Goal: 'Wants to start a non-profit for underprivileged kids',
+            Strength: 8,
+          },
+          'Information / News Sources / Media Diet': {
+            Sources: ['NPR', 'The New York Times'],
+            Strength: 7,
+          },
+          'Character Growth Areas': {
+            Area: 'Working on patience',
+            Strength: 4,
+          },
+          'Meaningful Material Items': {
+            Item: 'Heirloom necklace from grandmother',
+            Strength: 9,
+          },
+          'Approach to Conflicts / Resolutions': {
+            Approach: 'Diplomatic, tries to avoid confrontation',
+            Strength: 7,
+          },
+          'Communication Style': {
+            Style: 'Direct but compassionate',
+            Strength: 7,
+          },
+          'Life Story Experience': {
+            Background:
+              'Grew up in a single-parent household, faced financial difficulties, which motivated her to pursue a career in education to give back',
+            Strength: 10,
+          },
+          'Negative Valence Attachments': {
+            Dislikes: 'Dishonesty',
+            Strength: 9,
+          },
+          Aversion: { Elitism: 8 },
+        },
+      };
+
+      // Call the visualization function
+      createVisualization(jsonData);
+    </script>
+  </body>
+</html>

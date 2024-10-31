@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Self Map Visualization</title>
+    <style>
+        #chart {
+            width: 800px;
+            height: 600px;
+            margin: 20px auto;
+        }
+        .axis path, .axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .dot {
+            stroke: #fff;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        const jsonData = {
+            "Self Map 1": {"Name": "Emily Rivera", "Age": 32, "Gender": "Female", "Racial Attributes": {"Identity": "Latina", "Attachment Strength": "8/10 \u2013 Strong sense of cultural identity"}, "Family": {"Mother": 8, "Brother": 7, "Father": 3}, "Morals / Ethics / Values / Philosophy": {"Beliefs": "Strong belief in fairness, equality, and empathy", "Strength": 9}, "Sexual Identity": {"Identity": "Heterosexual", "Strength": 5}, "Religious Beliefs": {"Beliefs": "Agnostic but open to spirituality", "Strength": 4}, "Vocation / Job": {"Title": "Teacher", "Identification": "Identifies heavily with her role in education", "Strength": 9}, "Closest Relationships": {"Best Friend": 8, "Partner": 6}, "Character Strengths": {"Empathy": 9, "Resilience": 7}, "Character Traits": {"Introverted": 6, "Assertive": 6}, "Community / Group Affiliations": {"Volunteer": 6}, "Education / Knowledge": {"Degree": "Bachelor\u2019s in Education", "Strength": 7}, "Sports Team Affiliation": {"Interest": "Indifferent to sports", "Strength": 2}, "Political Leanings": {"Ideology": "Liberal, socially engaged", "Strength": 8}, "Future Aspirations": {"Goal": "Wants to start a non-profit for underprivileged kids", "Strength": 8}, "Information / News Sources / Media Diet": {"Sources": ["NPR", "The New York Times"], "Strength": 7}, "Character Growth Areas": {"Area": "Working on patience", "Strength": 4}, "Meaningful Material Items": {"Item": "Heirloom necklace from grandmother", "Strength": 9}, "Approach to Conflicts / Resolutions": {"Approach": "Diplomatic, tries to avoid confrontation", "Strength": 7}, "Communication Style": {"Style": "Direct but compassionate", "Strength": 7}, "Life Story Experience": {"Background": "Grew up in a single-parent household, faced financial difficulties, which motivated her to pursue a career in education to give back", "Strength": 10}, "Negative Valence Attachments": {"Dislikes": "Dishonesty", "Strength": 9}, "Aversion": {"Elitism": 8}}
+        };
+
+        const margin = {top: 40, right: 40, bottom: 50, left: 60};
+        const width = 800 - margin.left - margin.right;
+        const height = 600 - margin.top - margin.bottom;
+
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        const xScale = d3.scaleLinear()
+            .domain([-10, 10])
+            .range([0, width]);
+
+        const yScale = d3.scaleLinear()
+            .domain([-10, 10])
+            .range([height, 0]);
+
+        const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+        // Axes
+        const xAxis = d3.axisBottom(xScale).tickSize(-height);
+        const yAxis = d3.axisLeft(yScale).tickSize(-width);
+
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(0, ${height/2})`)
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(${width/2}, 0)`)
+            .call(yAxis);
+
+        // Axis Labels
+        svg.append("text")
+            .attr("class", "axis-label")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 10)
+            .style("text-anchor", "middle")
+            .text("X Axis");
+
+        svg.append("text")
+            .attr("class", "axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -margin.left + 20)
+            .style("text-anchor", "middle")
+            .text("Y Axis");
+
+        // Title
+        svg.append("text")
+            .attr("x", width / 2)
+            .attr("y", -margin.top / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", "16px")
+            .style("font-weight", "bold")
+            .text("Self Map Visualization");
+
+        // Tooltip
+        const tooltip = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip");
+
+        // Function to calculate circle position
+        function calculatePosition(value, scale) {
+            if (value === 10) return scale(0);
+            if (value >= 5) return scale(value / 2);
+            return scale(value);
+        }
+
+        // Function to calculate circle size
+        function calculateSize(value) {
+            if (value === 10) return 10.5; // 150% of base size
+            if (value >= 5) return 7; // 100% of base size
+            return 5.25; // 75% of base size
+        }
+
+        // Process and visualize data
+        const data = [];
+        for (const [key, value] of Object.entries(jsonData["Self Map 1"])) {
+            if (typeof value === 'object' && value !== null && 'Strength' in value) {
+                data.push({
+                    name: key,
+                    strength: value.Strength
+                });
+            }
+        }
+
+        // Data points
+        svg.selectAll(".dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("class", "dot")
+            .attr("r", d => calculateSize(d.strength))
+            .attr("cx", d => calculatePosition(d.strength, xScale))
+            .attr("cy", d => calculatePosition(d.strength, yScale))
+            .style("fill", d => colorScale(d.name))
+            .on("mouseover", function(event, d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                tooltip.html(`<strong>${d.name}</strong><br>Strength: ${d.strength}`)
+                    .style("left", (event.pageX) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        // Legend
+        const legend = svg.append("g")
+            .attr("transform", `translate(${width - 120}, 20)`);
+
+        const legendItems = legend.selectAll(".legend-item")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "legend-item")
+            .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+        legendItems.append("rect")
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", d => colorScale(d.name));
+
+        legendItems.append("text")
+            .attr("x", 24)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .text(d => d.name);
+    </script>
+</body>
+</html>
